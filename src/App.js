@@ -1,4 +1,4 @@
-import React,{useState} from 'react';
+import React,{useState,useEffect} from 'react';
 import './style.css';
 import Header from './component/Header';
 import Main from './component/Main';
@@ -14,24 +14,32 @@ export default function App() {
     if(exist){
       const newCardItems = cardItems.map((x)=> x.id === productcomponentprops.id ? {...exist , qty : exist.qty + 1} : x );
       setCardItems(newCardItems);
+      localStorage.setItem("cardItems",JSON.stringify(newCardItems));
     }
     else{
         const newCardItems = [...cardItems, {...productcomponentprops, qty: 1}];
         setCardItems(newCardItems);
+        localStorage.setItem("cardItems",JSON.stringify(newCardItems));
     }
   }
   const onRemove = (productcomponentprops) => {
-    const exist = cardItems.find((x)=> x.id === productcomponentprops.id);
+    const exist = cardItems.find(x=> x.id === productcomponentprops.id);
     if(exist.qty === 1){
-        const newCardItems = cardItems.filter(x=> x.id === productcomponentprops.id);
+        const newCardItems = cardItems.filter(x=> x.id !== productcomponentprops.id);
         setCardItems(newCardItems);
+        localStorage.setItem("cardItems",JSON.stringify(newCardItems));
     }
     else{
       const newCardItems = cardItems.map(x=> x.id === productcomponentprops.id ? {...exist , qty : exist.qty - 1} : x);
       setCardItems(newCardItems);
+      localStorage.setItem("cardItems",JSON.stringify(newCardItems));
     }
   }
-
+  useEffect(()=>{
+    setCardItems(
+        localStorage.getItem("cardItems") ? JSON.parse(localStorage.getItem("cardItems")) : []
+    );
+  },[]);
   return (
     <>
       <Header countCartItems={cardItems.length} />
@@ -41,7 +49,7 @@ export default function App() {
             <Main products={products} onAdd={onAdd} onRemove={onRemove} cardItems={cardItems} />
           </div>
           <div className="col col-2">
-            <Basket />
+            <Basket onAdd={onAdd} onRemove={onRemove} cardItems={cardItems} />
           </div>
         </div>
       </div>

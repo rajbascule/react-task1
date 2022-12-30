@@ -10,7 +10,7 @@ export default function Main(props) {
             {products.map((x)=>{
               return(
                   <div className="product_col" key={x.id}>
-                      <Product products={x} onAdd={onAdd} onRemove={onRemove} item={cardItems.find(x=> x.id === products.id)} ></Product>
+                      <Product products={x} onAdd={onAdd} onRemove={onRemove} item={cardItems.find(y=> y.id === x.id)} ></Product>
                   </div>
               )
             })}
